@@ -24,5 +24,5 @@ public class Theatre {
 	private String theatreLocation;
 	@OneToMany
 	List<Movie> theatreMovieList;
-
+	
 }
