@@ -1,32 +1,26 @@
 package com.bookmyshow.bookMyShow.Entity;
 
-import java.util.List;
-
 import org.springframework.stereotype.Component;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
-
 @Entity
+@Component
 @Getter
 @Setter
-@Component
-public class User {
+public class TheatreAdmin {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int userId;
-	private String userName;
-	private long userContact;
-	private String userEmail;
-	private String userPassword;
-	@OneToMany(cascade = CascadeType.ALL)
-	List<Ticket> ticketList;
+	private int theatreAdminID;
+	private String theatreAdminName;
+	private Long theatreAdminContact;
+	private String theatreAdminEmail;
+	private String theatreAdminPassword;
+	@OneToOne
+	private Theatre adTheatre;
 	
 }

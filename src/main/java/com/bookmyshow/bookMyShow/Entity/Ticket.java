@@ -28,13 +28,11 @@ public class Ticket {
 	private int ticketId;
 	private LocalDate bookingDate;
 	private double totalTicketPrice;
-	@ManyToOne
-	private User userTickets;
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Movie movieTicket; 
 	@ManyToMany(cascade = CascadeType.ALL)
 	private HashSet<Seat> ticketSeats;
-	@OneToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
 	private Payment ticketPayment;
 
 }

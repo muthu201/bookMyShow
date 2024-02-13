@@ -1,5 +1,6 @@
 package com.bookmyshow.bookMyShow.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -72,14 +73,14 @@ public class UserService {
 		throw new UserNotFound("user not updated because,user not found for the given id");
 	}
 	public ResponseEntity<ResponseStructure<List<UserDto>>> findAllUser(){
-		UserDto uDto=new UserDto();
+		List<UserDto> uDto=new ArrayList<UserDto>();
 		ModelMapper mapper=new ModelMapper();
 		List<User> userList=uDao.findAllUser();
 		mapper.map(userList, uDto);
 		ResponseStructure<List<UserDto>> structure=new ResponseStructure<List<UserDto>>();
 		structure.setMessage("find all User success");
 		structure.setStatus(HttpStatus .FOUND.value());
-		structure.setData((List<UserDto>) uDto);;
+		structure.setData(uDto);;
 		return new ResponseEntity<ResponseStructure<List<UserDto>>>(structure,HttpStatus.FOUND);
 	}
 }
