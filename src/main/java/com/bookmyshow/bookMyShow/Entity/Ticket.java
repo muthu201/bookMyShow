@@ -1,8 +1,8 @@
 package com.bookmyshow.bookMyShow.Entity;
 
 import java.time.LocalDate;
+
 import java.time.LocalTime;
-import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -12,8 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,9 +33,9 @@ public class Ticket {
 	private String movieLanguage; 
 	private LocalDate bookingDate;
 	private double totalTicketPrice; 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<Seat> ticketSeats;
-	@ManyToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL)
 	private Payment ticketPayment;
 
 }

@@ -1,16 +1,12 @@
 package com.bookmyshow.bookMyShow.Entity;
-
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -38,7 +34,7 @@ public class User {
 	@Email
 	private String userEmail;
 	private String userPassword;
-	@OneToMany(cascade = CascadeType.ALL)
-	List<Ticket> ticketList;
+	@OneToOne(cascade = CascadeType.ALL)
+	Ticket ticket;
 	
 }

@@ -115,6 +115,7 @@ public class TicketService {
 		ticket.setTicketSeats(bookedSeats);
 		ticket.setTotalTicketPrice(payment.getPrice());
 		Ticket newTicket=tDao.saveTicket(ticket);
+		
 		ResponseStructure<Ticket> structure=new ResponseStructure<Ticket>();
 		structure.setMessage("ticket booked successfully");
 		structure.setStatus(HttpStatus.CREATED.value());
@@ -127,7 +128,30 @@ public class TicketService {
 		throw new  SeatNotFound("user seats are not available please enter available seat Ids");
 		
 	}
-	
+	public ResponseEntity<ResponseStructure<Payment>> cancelBooking(int ticketId){
+		Ticket ticket=tDao.findTicket(ticketId);
+		if(ticket != null) {
+			List<Seat> lists = ticket.getTicketSeats();
+			for (Seat seat : lists) {
+				seat.setSeatAvailability(true);
+				sDao.updateSeat(seat, seat.getSeatId());
+				Movie movie=mDao.findMovie(ticket.getMovieId());
+				movie.setTotalNoSeats(movie.getTotalNoSeats()+1);
+				mDao.updateMovie(movie, ticket.getMovieId());
+			}
+			ticket.setTicketSeats(null);
+			Payment payment=ticket.getTicketPayment();
+			tDao.deleteTicket(ticketId);
+			ResponseStructure<Payment> structure=new ResponseStructure<Payment>();
+			structure.setMessage("cancel booking success.amount refunded");
+			structure.setStatus(HttpStatus.OK.value());
+			structure.setData(payment);
+			return new ResponseEntity<ResponseStructure<Payment>> (structure,HttpStatus.OK);
+		}
+		else {
+			throw new TicketNotFound("ticket not found for given id");
+		}
+	}
 	private User userLogin(String userEmail, String userPassword) {
 		User user=uDao.findByUserEmail(userEmail);
 		if(user != null) {

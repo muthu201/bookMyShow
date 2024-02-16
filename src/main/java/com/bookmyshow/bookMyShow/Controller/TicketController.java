@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bookmyshow.bookMyShow.Entity.Payment;
 import com.bookmyshow.bookMyShow.Entity.SeatType;
 import com.bookmyshow.bookMyShow.Entity.Ticket;
 import com.bookmyshow.bookMyShow.Service.TicketService;
@@ -32,6 +33,10 @@ public class TicketController {
 	@GetMapping
 	ResponseEntity<ResponseStructure<Ticket>> findTicket(@RequestParam int ticketId){
 		return tService.findTicket(ticketId);
+	}
+	@DeleteMapping("cancelBooking")
+	public ResponseEntity<ResponseStructure<Payment>> cancelBooking(int ticketId){
+		return tService.cancelBooking(ticketId);
 	}
 	@DeleteMapping
 	ResponseEntity<ResponseStructure<Ticket>> deleteTicket(@RequestParam int ticketId){

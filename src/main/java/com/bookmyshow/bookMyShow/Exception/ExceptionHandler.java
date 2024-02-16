@@ -1,10 +1,10 @@
 package com.bookmyshow.bookMyShow.Exception;
 
 import java.util.HashMap;
+
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -84,6 +84,7 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler{
 		structure.setStatus(HttpStatus.NOT_FOUND.value());
 		return new ResponseEntity<ResponseStructure<String>>(structure,HttpStatus.NOT_FOUND);
 	}
+	@org.springframework.web.bind.annotation.ExceptionHandler
 	public ResponseEntity<ResponseStructure<Object>> constraintViolationException(ConstraintViolationException ex){
 		ResponseStructure<Object> structure=new ResponseStructure<Object>();
 		Map<String, String> hashMap=new HashMap<String, String>();
