@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +17,7 @@ import com.bookmyshow.bookMyShow.Service.TheatreAdminService;
 import com.bookmyshow.bookMyShow.util.ResponseStructure;
 
 @RestController
+@RequestMapping("theatreAdmin")
 public class TheatreAdminController {
 	@Autowired
 	TheatreAdminService taService;
@@ -28,7 +30,11 @@ public class TheatreAdminController {
 	ResponseEntity<ResponseStructure<TheatreAdminDto>> findAdmin(@RequestParam int  theatreAdminId){
 		return taService.findAdmin(theatreAdminId);
 	}
-	
+	@PutMapping("assignTheatreToTheatreAdmin")
+	ResponseEntity<ResponseStructure<TheatreAdminDto>> assignTheatreToTheatreAdmin(@RequestParam int  theatreAdminId,@RequestParam int  theatreId){
+		return taService.assignTheatreToTheatreAdmin(theatreAdminId, theatreId);
+	}
+
 	@PutMapping
 	ResponseEntity<ResponseStructure<TheatreAdminDto>> updateAdmin(@RequestBody TheatreAdmin theatreAdmin,@RequestParam int theatreAdminId){
 		return taService.updateAdmin(theatreAdmin, theatreAdminId);

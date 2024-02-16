@@ -1,6 +1,7 @@
 package com.bookmyshow.bookMyShow.Entity;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,7 @@ public class Theatre {
 	private int theatreId;
 	private String theatreName;
 	private String theatreLocation;
+	private int totalNoOfSeats;
 	@OneToMany
 	List<Movie> theatreMovieList;
 	

@@ -31,7 +31,9 @@ public class UserDao {
 		uRepo.delete(user);
 		return user;
 	}
-	
+	public User findByEmail(String userEmail) {
+		return uRepo.findByUserEmail(userEmail);
+	}
 	public User updateUser(User user,int userId) {
 		User newUser=findUser(userId);
 		if(newUser != null) {

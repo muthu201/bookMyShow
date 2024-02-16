@@ -1,5 +1,7 @@
 package com.bookmyshow.bookMyShow.Service;
 
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +11,16 @@ import org.springframework.stereotype.Service;
 import com.bookmyshow.bookMyShow.Dao.AdminDao;
 import com.bookmyshow.bookMyShow.Dto.AdminDto;
 import com.bookmyshow.bookMyShow.Entity.Admin;
+import com.bookmyshow.bookMyShow.Entity.Theatre;
 import com.bookmyshow.bookMyShow.Exception.AdminNotFound;
+import com.bookmyshow.bookMyShow.Repo.TheatreRepo;
 import com.bookmyshow.bookMyShow.util.ResponseStructure;
 @Service
 public class AdminService {
 	@Autowired
 	AdminDao aDao;
-	
+	@Autowired
+	TheatreRepo tRepo;
 	public ResponseEntity<ResponseStructure<AdminDto>> saveAdmin(Admin admin){
 		AdminDto aDto=new AdminDto();
 		ModelMapper mapper=new ModelMapper();
@@ -70,5 +75,20 @@ public class AdminService {
 		}
 		throw new AdminNotFound("Admin not deleted because,Admin not found for the given id");
 	}
-	
+	public ResponseEntity<ResponseStructure<AdminDto>> assignTheatresToAdmin(int adminId,List<Integer> theatreIds){
+		AdminDto aDto=new AdminDto();
+		ModelMapper mapper=new ModelMapper();
+		Admin admin=aDao.findAdmin(adminId);
+		if(admin != null) {
+			List<Theatre> extheatres=tRepo.findAllById(theatreIds);
+			admin.setTheatresList(extheatres);
+			mapper.map(aDao.updateAdmin(admin, adminId), aDto);
+			ResponseStructure<AdminDto> structure=new ResponseStructure<AdminDto>();
+			structure.setMessage("assign theatre to Admin success");
+			structure.setStatus(HttpStatus .OK.value());
+			structure.setData(aDto);
+			return new ResponseEntity<ResponseStructure<AdminDto>>(structure,HttpStatus.OK);
+		}
+		throw new AdminNotFound("we can't assign theatres to Admin because,Admin not found for the given id");
+	}
 }

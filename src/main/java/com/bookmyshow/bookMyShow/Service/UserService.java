@@ -44,6 +44,22 @@ public class UserService {
 		}
 		throw new UserNotFound("user not found for the given id");
 	}
+	public ResponseEntity<ResponseStructure<UserDto>> findByEmail(String userEmail,String userPassword){
+		UserDto uDto=new UserDto();
+		ModelMapper mapper=new ModelMapper();
+		User user=uDao.findByEmail(userEmail);
+		if(user != null) {
+			if(user.getUserPassword()==userPassword) {
+		mapper.map(user, uDto);
+		ResponseStructure<UserDto> structure=new ResponseStructure<UserDto>();
+		structure.setMessage("User login success");
+		structure.setStatus(HttpStatus .FOUND.value());
+		structure.setData(uDto);
+		return new ResponseEntity<ResponseStructure<UserDto>> (structure,HttpStatus.FOUND);
+			}
+		}
+		throw new UserNotFound("user not found for the given id");
+	}
 	public ResponseEntity<ResponseStructure<UserDto>> deleteUser(int userId){
 		UserDto uDto=new UserDto();
 		ModelMapper mapper=new ModelMapper();

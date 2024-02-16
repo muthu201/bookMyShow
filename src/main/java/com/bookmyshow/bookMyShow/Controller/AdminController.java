@@ -1,5 +1,7 @@
 package com.bookmyshow.bookMyShow.Controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,7 +28,10 @@ public class AdminController {
 	ResponseEntity<ResponseStructure<AdminDto>> saveAdmin(@RequestBody Admin admin){
 		return aService.saveAdmin(admin);
 	}
-	
+	@PutMapping("assignTheatresToAdmin")
+	ResponseEntity<ResponseStructure<AdminDto>> assignTheatresToAdmin(@RequestParam int adminId,@RequestBody List<Integer> theatreIds){
+		return aService.assignTheatresToAdmin(adminId, theatreIds);
+	}
 	@GetMapping
 	ResponseEntity<ResponseStructure<AdminDto>> findAdmin(@RequestParam int adminId){
 		return aService.findAdmin(adminId);
@@ -38,7 +43,7 @@ public class AdminController {
 	}
 	
 	@DeleteMapping
-	ResponseEntity<ResponseStructure<AdminDto>> deleteAdmin(@RequestBody int adminId){
+	ResponseEntity<ResponseStructure<AdminDto>> deleteAdmin(@RequestParam int adminId){
 		return aService.deleteAdmin(adminId);
 	}
 }

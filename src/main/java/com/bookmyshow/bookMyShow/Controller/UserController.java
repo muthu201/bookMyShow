@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,8 @@ import com.bookmyshow.bookMyShow.Entity.User;
 import com.bookmyshow.bookMyShow.Service.UserService;
 import com.bookmyshow.bookMyShow.util.ResponseStructure;
 
+import jakarta.validation.Valid;
+
 @RequestMapping("user")
 @RestController
 public class UserController {
@@ -25,12 +28,16 @@ public class UserController {
 	UserService uService;
 	
 	@PostMapping
-	ResponseEntity<ResponseStructure<UserDto>> saveUser(@RequestBody User user){
+	ResponseEntity<ResponseStructure<UserDto>> saveUser(@Valid @RequestBody User user,BindingResult result){
 		return uService.saveUser(user);
 	}
 	@GetMapping
 	ResponseEntity<ResponseStructure<UserDto>> findUser(@RequestParam int userId){
 		return uService.findUser(userId);
+	}
+	@GetMapping("userLogin")
+	ResponseEntity<ResponseStructure<UserDto>> findUser(@RequestParam String userEmail,@RequestParam String userPassword){
+		return uService.findByEmail(userEmail, userPassword);
 	}
 	@PutMapping
 	ResponseEntity<ResponseStructure<UserDto>> saveAdmin(@RequestBody User user,@RequestParam int userId){

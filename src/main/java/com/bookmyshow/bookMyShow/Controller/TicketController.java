@@ -1,5 +1,6 @@
 package com.bookmyshow.bookMyShow.Controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bookmyshow.bookMyShow.Entity.SeatType;
 import com.bookmyshow.bookMyShow.Entity.Ticket;
 import com.bookmyshow.bookMyShow.Service.TicketService;
 import com.bookmyshow.bookMyShow.util.ResponseStructure;
@@ -38,6 +40,10 @@ public class TicketController {
 	@PutMapping
 	ResponseEntity<ResponseStructure<Ticket>> updateTicket(@RequestBody Ticket ticket,@RequestParam int ticketId){
 		return tService.updateTicket(ticket,ticketId);
+	}
+	@PostMapping("bookTicket")
+	ResponseEntity<ResponseStructure<Ticket>> ticketBooking(@RequestParam String userEmail,@RequestParam String userPassword,@RequestParam int movieId,@RequestParam SeatType seatType,@RequestBody List<Integer> seatIds,@RequestParam LocalDate bookingDate){
+		return tService.ticketBooking(userEmail, userPassword, movieId, seatType, seatIds, bookingDate);
 	}
 	@GetMapping("findAllTicket")
 	ResponseEntity<ResponseStructure<List<Ticket>>> findAllTicket(){

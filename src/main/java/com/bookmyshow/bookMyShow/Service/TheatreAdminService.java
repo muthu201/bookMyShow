@@ -7,15 +7,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.bookmyshow.bookMyShow.Dao.TheatreAdminDao;
+import com.bookmyshow.bookMyShow.Dao.TheatreDao;
 import com.bookmyshow.bookMyShow.Dto.TheatreAdminDto;
+import com.bookmyshow.bookMyShow.Entity.Theatre;
 import com.bookmyshow.bookMyShow.Entity.TheatreAdmin;
 import com.bookmyshow.bookMyShow.Exception.TheatreAdminNotFound;
+import com.bookmyshow.bookMyShow.Exception.TheatreNotFound;
 import com.bookmyshow.bookMyShow.util.ResponseStructure;
 
 @Service
 public class TheatreAdminService {
 	@Autowired
 	TheatreAdminDao taDao;
+	@Autowired
+	TheatreDao tDao;
 	public ResponseEntity<ResponseStructure<TheatreAdminDto>> saveAdmin(TheatreAdmin theatreAdmin){
 		TheatreAdminDto taDto=new TheatreAdminDto();
 		ModelMapper mapper=new ModelMapper();
@@ -70,5 +75,28 @@ public class TheatreAdminService {
 		}
 		throw new TheatreAdminNotFound("theatre Admin not deleted because,theatre Admin not found for the given id");
 	}
+	public ResponseEntity<ResponseStructure<TheatreAdminDto>> assignTheatreToTheatreAdmin(int theatreAdminId,int theatreId){
+		TheatreAdminDto taDto=new TheatreAdminDto();
+		ModelMapper mapper=new ModelMapper();
+		TheatreAdmin tAdmin=taDao.findAdmin(theatreAdminId);
+		Theatre theatre=tDao.findTheatre(theatreId);
+		if(tAdmin != null) {
+			if(theatre != null) {
+				tAdmin.setAdTheatre(theatre);
+				mapper.map(taDao.updateAdmin(tAdmin, theatreAdminId), taDto);
+				ResponseStructure<TheatreAdminDto> structure=new ResponseStructure<TheatreAdminDto>();
+				structure.setMessage("assign theatre to Theatre Admin success");
+				structure.setStatus(HttpStatus .OK.value());
+				structure.setData(taDto);
+				return new ResponseEntity<ResponseStructure<TheatreAdminDto>>(structure,HttpStatus.OK);
+			}
+			else {
+				throw new TheatreNotFound("theatre not assigned to the theatre admin because,theatre not found for the given id");
+			}
+			
+		}
+		throw new TheatreAdminNotFound("we can't assign theatre to theatre admin because,theatre Admin not found for the given id");
+	}
+
 	
 }
