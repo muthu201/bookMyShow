@@ -35,8 +35,8 @@ public class TicketController {
 		return tService.findTicket(ticketId);
 	}
 	@DeleteMapping("cancelBooking")
-	public ResponseEntity<ResponseStructure<Payment>> cancelBooking(int ticketId){
-		return tService.cancelBooking(ticketId);
+	public ResponseEntity<ResponseStructure<Payment>> cancelBooking(@RequestParam int ticketId,@RequestParam String userEmail,@RequestParam String userPassword){
+		return tService.cancelBooking(ticketId, userEmail, userPassword);
 	}
 	@DeleteMapping
 	ResponseEntity<ResponseStructure<Ticket>> deleteTicket(@RequestParam int ticketId){
@@ -47,8 +47,8 @@ public class TicketController {
 		return tService.updateTicket(ticket,ticketId);
 	}
 	@PostMapping("bookTicket")
-	ResponseEntity<ResponseStructure<Ticket>> ticketBooking(@RequestParam String userEmail,@RequestParam String userPassword,@RequestParam int movieId,@RequestParam SeatType seatType,@RequestBody List<Integer> seatIds,@RequestParam LocalDate bookingDate){
-		return tService.ticketBooking(userEmail, userPassword, movieId, seatType, seatIds, bookingDate);
+	ResponseEntity<ResponseStructure<Ticket>> ticketBooking(@RequestParam String userEmail,@RequestParam String userPassword,@RequestParam int movieId,@RequestParam SeatType seatType,@RequestBody List<Integer> seatIds,@RequestParam LocalDate bookingDate,@RequestParam String paymentMethod){
+		return tService.ticketBooking(userEmail, userPassword, movieId, seatType, seatIds, bookingDate,paymentMethod);
 	}
 	@GetMapping("findAllTicket")
 	ResponseEntity<ResponseStructure<List<Ticket>>> findAllTicket(){

@@ -36,7 +36,7 @@ public class UserController {
 		return uService.findUser(userId);
 	}
 	@GetMapping("userLogin")
-	ResponseEntity<ResponseStructure<UserDto>> findUser(@RequestParam String userEmail,@RequestParam String userPassword){
+	ResponseEntity<ResponseStructure<UserDto>> findByEmail(@RequestParam String userEmail,@RequestParam String userPassword){
 		return uService.findByEmail(userEmail, userPassword);
 	}
 	@PutMapping

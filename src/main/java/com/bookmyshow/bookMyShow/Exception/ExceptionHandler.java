@@ -6,13 +6,14 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.bookmyshow.bookMyShow.util.ResponseStructure;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-
+@RestControllerAdvice
 public class ExceptionHandler extends ResponseEntityExceptionHandler{
 	
 	@org.springframework.web.bind.annotation.ExceptionHandler

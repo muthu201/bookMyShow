@@ -32,7 +32,7 @@ public class UserDao {
 		return user;
 	}
 	public User findByEmail(String userEmail) {
-		return uRepo.findByUserEmail(userEmail);
+		return uRepo.findByEmail(userEmail);
 	}
 	public User updateUser(User user,int userId) {
 		User newUser=findUser(userId);

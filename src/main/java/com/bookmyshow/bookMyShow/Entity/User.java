@@ -15,7 +15,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
-
+import lombok.ToString;
+@ToString
 @Entity
 @Getter
 @Setter
@@ -35,6 +36,6 @@ public class User {
 	private String userEmail;
 	private String userPassword;
 	@OneToOne(cascade = CascadeType.ALL)
-	Ticket ticket;
+	private Ticket ticket;
 	
 }

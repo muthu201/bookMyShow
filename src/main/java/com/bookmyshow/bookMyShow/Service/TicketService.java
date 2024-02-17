@@ -1,6 +1,7 @@
 package com.bookmyshow.bookMyShow.Service;
 
 import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import com.bookmyshow.bookMyShow.Dao.MovieDao;
 import com.bookmyshow.bookMyShow.Dao.PaymentDao;
 import com.bookmyshow.bookMyShow.Dao.SeatDao;
 import com.bookmyshow.bookMyShow.Dao.TicketDao;
+import com.bookmyshow.bookMyShow.Dao.UserDao;
 import com.bookmyshow.bookMyShow.Entity.Movie;
 import com.bookmyshow.bookMyShow.Entity.Payment;
 import com.bookmyshow.bookMyShow.Entity.Seat;
@@ -19,14 +21,14 @@ import com.bookmyshow.bookMyShow.Entity.Ticket;
 import com.bookmyshow.bookMyShow.Entity.User;
 import com.bookmyshow.bookMyShow.Exception.SeatNotFound;
 import com.bookmyshow.bookMyShow.Exception.TicketNotFound;
+import com.bookmyshow.bookMyShow.Exception.UserNotFound;
 import com.bookmyshow.bookMyShow.Repo.SeatRepo;
-import com.bookmyshow.bookMyShow.Repo.UserRepo;
 import com.bookmyshow.bookMyShow.util.ResponseStructure;
 
 @Service
 public class TicketService {
 	@Autowired
-	UserRepo uDao;
+	UserDao uDao;
 	@Autowired
 	TicketDao tDao;
 	@Autowired
@@ -87,7 +89,7 @@ public class TicketService {
 				if(seatAvail.getSeatId()==integer) {
 					seats.add(seatAvail);
 					Movie movie=mDao.findMovie(movieId);
-					movie.setTotalNoSeats(movie.getTotalNoSeats()-1);
+					movie.setTotalNoSeats((movie.getTotalNoSeats())-1);
 					mDao.updateMovie(movie, movieId);
 					seatAvail.setSeatAvailability(false);
 					sDao.updateSeat(seatAvail, seatAvail.getSeatId());
@@ -96,14 +98,15 @@ public class TicketService {
 		}
 		return seats;
 	}
-	public ResponseEntity<ResponseStructure<Ticket>> ticketBooking(String userEmail,String userPassword,int movieId,SeatType seatType,List<Integer> seatIds,LocalDate bookingDate){
-		
+	public ResponseEntity<ResponseStructure<Ticket>> ticketBooking(String userEmail,String userPassword,int movieId,SeatType seatType,List<Integer> seatIds,LocalDate bookingDate,String paymentMethod){
+		User user=userLogin(userEmail, userPassword);
+		if(user != null) {
 		Ticket ticket=new Ticket();
 		List<Seat> availableSeat=mService.findSeatsAvailability(movieId, seatType);
 		if(availableSeat != null) {
 		List<Seat> bookedSeats=bookSeat(availableSeat, seatIds,movieId);
 		if(!bookedSeats.isEmpty()) {
-		Payment payment= processPayement(bookedSeats,bookingDate);
+		Payment payment= processPayement(bookedSeats,bookingDate,paymentMethod);
 		ticket.setBookingDate(bookingDate);
 		Movie movie=mDao.findMovie(movieId);
 		ticket.setMovieId(movieId);
@@ -115,7 +118,8 @@ public class TicketService {
 		ticket.setTicketSeats(bookedSeats);
 		ticket.setTotalTicketPrice(payment.getPrice());
 		Ticket newTicket=tDao.saveTicket(ticket);
-		
+		user.setTicket(newTicket);
+		uDao.updateUser(user, user.getUserId());
 		ResponseStructure<Ticket> structure=new ResponseStructure<Ticket>();
 		structure.setMessage("ticket booked successfully");
 		structure.setStatus(HttpStatus.CREATED.value());
@@ -126,9 +130,12 @@ public class TicketService {
 
 		}
 		throw new  SeatNotFound("user seats are not available please enter available seat Ids");
-		
+		}
+		throw new UserNotFound("user login required please provide correct credentials");
 	}
-	public ResponseEntity<ResponseStructure<Payment>> cancelBooking(int ticketId){
+	public ResponseEntity<ResponseStructure<Payment>> cancelBooking(int ticketId,String userEmail,String userPassword){
+		User user=userLogin(userEmail, userPassword);
+		if(user != null) {
 		Ticket ticket=tDao.findTicket(ticketId);
 		if(ticket != null) {
 			List<Seat> lists = ticket.getTicketSeats();
@@ -140,6 +147,8 @@ public class TicketService {
 				mDao.updateMovie(movie, ticket.getMovieId());
 			}
 			ticket.setTicketSeats(null);
+			user.setTicket(null);
+			uDao.updateUser(user, user.getUserId());
 			Payment payment=ticket.getTicketPayment();
 			tDao.deleteTicket(ticketId);
 			ResponseStructure<Payment> structure=new ResponseStructure<Payment>();
@@ -151,9 +160,11 @@ public class TicketService {
 		else {
 			throw new TicketNotFound("ticket not found for given id");
 		}
+		}
+		throw new UserNotFound("loginrequired please provide correct details");
 	}
 	private User userLogin(String userEmail, String userPassword) {
-		User user=uDao.findByUserEmail(userEmail);
+		User user=uDao.findByEmail(userEmail);
 		if(user != null) {
 		  if(user.getUserPassword().equals(userPassword)) {
 			  return user;
@@ -162,7 +173,7 @@ public class TicketService {
 		}
 		return null;
 	}
-	private Payment processPayement(List<Seat> bookedSeats,LocalDate bookingDate) {
+	private Payment processPayement(List<Seat> bookedSeats,LocalDate bookingDate,String paymentMethod) {
 		Payment payment=new Payment();
 		long amount=0;
 		for (Seat seat : bookedSeats) {
@@ -177,6 +188,7 @@ public class TicketService {
 			}
 		}
 		payment.setPaymentDate(bookingDate);
+		payment.setPaymentMethod(paymentMethod);
 		payment.setPrice(amount);
 		Payment newPayment=pDao.savePayment(payment);
 		return newPayment;
