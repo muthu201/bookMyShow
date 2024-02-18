@@ -12,11 +12,13 @@ import org.springframework.stereotype.Service;
 import com.bookmyshow.bookMyShow.Dao.MovieDao;
 import com.bookmyshow.bookMyShow.Dao.TheatreDao;
 import com.bookmyshow.bookMyShow.Entity.Movie;
+import com.bookmyshow.bookMyShow.Entity.Screen;
 import com.bookmyshow.bookMyShow.Entity.Seat;
 import com.bookmyshow.bookMyShow.Entity.SeatType;
 import com.bookmyshow.bookMyShow.Entity.Theatre;
 import com.bookmyshow.bookMyShow.Exception.TheatreNotFound;
 import com.bookmyshow.bookMyShow.Repo.MovieRepo;
+import com.bookmyshow.bookMyShow.Repo.ScreenRepo;
 import com.bookmyshow.bookMyShow.Repo.SeatRepo;
 import com.bookmyshow.bookMyShow.Repo.TheatreRepo;
 import com.bookmyshow.bookMyShow.util.ResponseStructure;
@@ -28,7 +30,7 @@ public class TheatreService {
 	@Autowired
 	TheatreRepo tRepo;
 	@Autowired
-	MovieRepo mRepo;
+	ScreenRepo sRepo;
 	
 	public ResponseEntity<ResponseStructure<Theatre>> saveTheatre(Theatre theatre) {
 		ResponseStructure<Theatre> structure=new ResponseStructure<Theatre>();
@@ -71,13 +73,13 @@ public class TheatreService {
 	}
 		throw new TheatreNotFound("theatre not updated because,theatre not found for the given id");
 	}
-	public ResponseEntity<ResponseStructure<Theatre>> assignMoviesToTheatre(int theatreId,List<Integer> movieIds) {
+	public ResponseEntity<ResponseStructure<Theatre>> assignScreensToTheatre(int theatreId,List<Integer> screenIds) {
 		Theatre theatre=tDao.findTheatre(theatreId);
 		if(theatre != null) {
-		List<Movie> exmovies=mRepo.findAllById(movieIds);
-		theatre.setTheatreMovieList(exmovies);
+		List<Screen> exScreens=sRepo.findAllById(screenIds);
+		theatre.setTheatreScreensList(exScreens);
 		ResponseStructure<Theatre> structure=new ResponseStructure<Theatre>();
-		structure.setMessage("assign movies to theatre success");
+		structure.setMessage("assign screen to theatre success");
 		structure.setStatus(HttpStatus .OK.value());
 		structure.setData(tDao.updateTheatre(theatre, theatreId));
 		return new ResponseEntity<ResponseStructure<Theatre>>(structure,HttpStatus.OK);

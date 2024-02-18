@@ -10,11 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.bookmyshow.bookMyShow.Dao.MovieDao;
 import com.bookmyshow.bookMyShow.Dao.PaymentDao;
+import com.bookmyshow.bookMyShow.Dao.ScreenDao;
 import com.bookmyshow.bookMyShow.Dao.SeatDao;
 import com.bookmyshow.bookMyShow.Dao.TicketDao;
 import com.bookmyshow.bookMyShow.Dao.UserDao;
 import com.bookmyshow.bookMyShow.Entity.Movie;
 import com.bookmyshow.bookMyShow.Entity.Payment;
+import com.bookmyshow.bookMyShow.Entity.PaymentType;
 import com.bookmyshow.bookMyShow.Entity.Seat;
 import com.bookmyshow.bookMyShow.Entity.SeatType;
 import com.bookmyshow.bookMyShow.Entity.Ticket;
@@ -39,6 +41,8 @@ public class TicketService {
 	SeatRepo sRepo;
 	@Autowired
 	PaymentDao pDao;
+	@Autowired
+	ScreenDao screenDao;
 	@Autowired
 	MovieDao mDao;
 	public ResponseEntity<ResponseStructure<Ticket>> saveTicket(Ticket ticket) {
@@ -89,7 +93,7 @@ public class TicketService {
 				if(seatAvail.getSeatId()==integer) {
 					seats.add(seatAvail);
 					Movie movie=mDao.findMovie(movieId);
-					movie.setTotalNoSeats((movie.getTotalNoSeats())-1);
+					movie.setTotalNoOfSeatsAvailable((movie.getTotalNoOfSeatsAvailable())-1);
 					mDao.updateMovie(movie, movieId);
 					seatAvail.setSeatAvailability(false);
 					sDao.updateSeat(seatAvail, seatAvail.getSeatId());
@@ -98,7 +102,7 @@ public class TicketService {
 		}
 		return seats;
 	}
-	public ResponseEntity<ResponseStructure<Ticket>> ticketBooking(String userEmail,String userPassword,int movieId,SeatType seatType,List<Integer> seatIds,LocalDate bookingDate,String paymentMethod){
+	public ResponseEntity<ResponseStructure<Ticket>> ticketBooking(String userEmail,String userPassword,int ScreenId,int movieId,SeatType seatType,List<Integer> seatIds,LocalDate bookingDate,PaymentType paymentType){
 		User user=userLogin(userEmail, userPassword);
 		if(user != null) {
 		Ticket ticket=new Ticket();
@@ -106,14 +110,15 @@ public class TicketService {
 		if(availableSeat != null) {
 		List<Seat> bookedSeats=bookSeat(availableSeat, seatIds,movieId);
 		if(!bookedSeats.isEmpty()) {
-		Payment payment= processPayement(bookedSeats,bookingDate,paymentMethod);
+		Payment payment= processPayement(bookedSeats,bookingDate,paymentType);
 		ticket.setBookingDate(bookingDate);
 		Movie movie=mDao.findMovie(movieId);
 		ticket.setMovieId(movieId);
+		ticket.setScreenNumber(screenDao.findScreen(ScreenId).getScreenNumber());
 		ticket.setMovieLanguage(movie.getMovieLanguage());
 		ticket.setMovieName(movie.getMovieName());
-		ticket.setMovieStartTime(movie.getMovieStartTime());
-		ticket.setMoviesEndTime(movie.getMoviesEndTime());
+		ticket.setShowStartTime(movie.getShowStartTime());
+		ticket.setShowEndTime(movie.getShowEndTime());
 		ticket.setTicketPayment(payment);
 		ticket.setTicketSeats(bookedSeats);
 		ticket.setTotalTicketPrice(payment.getPrice());
@@ -143,7 +148,7 @@ public class TicketService {
 				seat.setSeatAvailability(true);
 				sDao.updateSeat(seat, seat.getSeatId());
 				Movie movie=mDao.findMovie(ticket.getMovieId());
-				movie.setTotalNoSeats(movie.getTotalNoSeats()+1);
+				movie.setTotalNoOfSeatsAvailable((movie.getTotalNoOfSeatsAvailable())+1);
 				mDao.updateMovie(movie, ticket.getMovieId());
 			}
 			ticket.setTicketSeats(null);
@@ -173,7 +178,7 @@ public class TicketService {
 		}
 		return null;
 	}
-	private Payment processPayement(List<Seat> bookedSeats,LocalDate bookingDate,String paymentMethod) {
+	private Payment processPayement(List<Seat> bookedSeats,LocalDate bookingDate,PaymentType paymentType) {
 		Payment payment=new Payment();
 		long amount=0;
 		for (Seat seat : bookedSeats) {
@@ -188,11 +193,12 @@ public class TicketService {
 			}
 		}
 		payment.setPaymentDate(bookingDate);
-		payment.setPaymentMethod(paymentMethod);
+		payment.setPaymentType(paymentType);
 		payment.setPrice(amount);
 		Payment newPayment=pDao.savePayment(payment);
 		return newPayment;
 	}
+	
 	public ResponseEntity<ResponseStructure<List<Ticket>>> findAllTicket() {
 		ResponseStructure<List<Ticket>> structure=new ResponseStructure<List<Ticket>>();
 		structure.setMessage("find all Ticket success");

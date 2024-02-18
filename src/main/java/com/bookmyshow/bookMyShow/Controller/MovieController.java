@@ -3,6 +3,7 @@ package com.bookmyshow.bookMyShow.Controller;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,8 @@ import com.bookmyshow.bookMyShow.Entity.SeatType;
 import com.bookmyshow.bookMyShow.Service.MovieService;
 import com.bookmyshow.bookMyShow.util.ResponseStructure;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("movie")
 public class MovieController {
@@ -25,12 +28,12 @@ public class MovieController {
 	MovieService mService;
 	
 	@PostMapping
-	ResponseEntity<ResponseStructure<Movie>> saveMovie(@RequestBody Movie movie){
+	ResponseEntity<ResponseStructure<Movie>> saveMovie(@Valid @RequestBody Movie movie,BindingResult result){
 		return mService.saveMovie(movie);
 	}
 
 	@GetMapping
-	ResponseEntity<ResponseStructure<Movie>> findMovie(@RequestParam int movieId){
+	ResponseEntity<ResponseStructure<Movie>> findMovie( @RequestParam int movieId){
 		return mService.findMovie(movieId);
 	}
 	@PutMapping("assignSeatsToMovies")
@@ -43,7 +46,7 @@ public class MovieController {
 		return mService.deleteMovie(movieId);
 	}
 	@PutMapping
-	ResponseEntity<ResponseStructure<Movie>> updateMovie(@RequestBody Movie movie,@RequestParam int movieId){
+	ResponseEntity<ResponseStructure<Movie>> updateMovie(@Valid @RequestBody Movie movie,@RequestParam int movieId,BindingResult result){
 		return mService.updateMovie(movie, movieId);
 	}
 	@GetMapping("findAllMovie")

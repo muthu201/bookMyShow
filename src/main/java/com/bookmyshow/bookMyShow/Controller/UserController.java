@@ -32,19 +32,19 @@ public class UserController {
 		return uService.saveUser(user);
 	}
 	@GetMapping
-	ResponseEntity<ResponseStructure<UserDto>> findUser(@RequestParam int userId){
+	ResponseEntity<ResponseStructure<UserDto>> findUser( @RequestParam int userId){
 		return uService.findUser(userId);
 	}
 	@GetMapping("userLogin")
-	ResponseEntity<ResponseStructure<UserDto>> findByEmail(@RequestParam String userEmail,@RequestParam String userPassword){
+	ResponseEntity<ResponseStructure<UserDto>> findByEmail(@Valid @RequestParam String userEmail, @RequestParam String userPassword,BindingResult result){
 		return uService.findByEmail(userEmail, userPassword);
 	}
 	@PutMapping
-	ResponseEntity<ResponseStructure<UserDto>> saveAdmin(@RequestBody User user,@RequestParam int userId){
+	ResponseEntity<ResponseStructure<UserDto>> saveAdmin(@Valid @RequestBody User user, @RequestParam int userId,BindingResult result){
 		return uService.updateUser(user, userId);
 	}
 	@DeleteMapping
-	ResponseEntity<ResponseStructure<UserDto>> deleteUser(@RequestParam int userId){
+	ResponseEntity<ResponseStructure<UserDto>> deleteUser( @RequestParam int userId){
 		return uService.deleteUser(userId);
 	}
 	@GetMapping("findAllUser")

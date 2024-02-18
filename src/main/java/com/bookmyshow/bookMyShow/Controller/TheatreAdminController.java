@@ -2,6 +2,7 @@ package com.bookmyshow.bookMyShow.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,13 +17,15 @@ import com.bookmyshow.bookMyShow.Entity.TheatreAdmin;
 import com.bookmyshow.bookMyShow.Service.TheatreAdminService;
 import com.bookmyshow.bookMyShow.util.ResponseStructure;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("theatreAdmin")
 public class TheatreAdminController {
 	@Autowired
 	TheatreAdminService taService;
 	@PostMapping
-	ResponseEntity<ResponseStructure<TheatreAdminDto>> saveAdmin(@RequestBody TheatreAdmin theatreAdmin){
+	ResponseEntity<ResponseStructure<TheatreAdminDto>> saveAdmin(@RequestBody TheatreAdmin theatreAdmin,BindingResult result){
 		return taService.saveAdmin(theatreAdmin);
 	}
 	
@@ -36,7 +39,7 @@ public class TheatreAdminController {
 	}
 
 	@PutMapping
-	ResponseEntity<ResponseStructure<TheatreAdminDto>> updateAdmin(@RequestBody TheatreAdmin theatreAdmin,@RequestParam int theatreAdminId){
+	ResponseEntity<ResponseStructure<TheatreAdminDto>> updateAdmin(@Valid @RequestBody TheatreAdmin theatreAdmin,@RequestParam int theatreAdminId,BindingResult result){
 		return taService.updateAdmin(theatreAdmin, theatreAdminId);
 	}
 	

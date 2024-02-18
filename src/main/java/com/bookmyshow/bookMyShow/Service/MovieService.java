@@ -75,7 +75,8 @@ public class MovieService {
 	}
 	public List<Seat> findSeatsAvailability(int movieId,SeatType seatType) {
 		Movie movie=mDao.findMovie(movieId);
-		List<Seat> seatList=movie.getSeatList();
+		if(movie != null) {
+		List<Seat> seatList=movie.getSeatsList();
 		List<Seat> seatsList=new ArrayList<Seat>();
 		for (Seat seat : seatList) {
 			if(seat.isSeatAvailability()==true && seat.getSeatType()==seatType) {
@@ -83,10 +84,13 @@ public class MovieService {
 			}
 		}
 		return seatsList;
+		}
+		throw new MovieNotFound("you can't see the seat availability because,movie not found gor given movie id");
 	}
 	public  ResponseEntity<ResponseStructure<List<Seat>>> findSeatAvailability(int movieId,SeatType seatType) {
 		Movie movie=mDao.findMovie(movieId);
-		List<Seat> seatList=movie.getSeatList();
+		if(movie != null) {
+		List<Seat> seatList=movie.getSeatsList();
 		List<Seat> seatsList=new ArrayList<Seat>();
 		for (Seat seat : seatList) {
 			if(seat.isSeatAvailability()==true && seat.getSeatType()==seatType) {
@@ -98,13 +102,15 @@ public class MovieService {
 		structure.setStatus(HttpStatus .FOUND.value());
 		structure.setData(seatsList);
 		return new ResponseEntity<ResponseStructure<List<Seat>>>(structure,HttpStatus.FOUND);
+		}
+		throw new MovieNotFound("you can't see the seat availability because,movie not found gor given movie id");
 	}
 	public  ResponseEntity<ResponseStructure<Movie>> assignSeatsToMovies(int movieId,List<Integer> seatIds) {
 		Movie movie=mDao.findMovie(movieId);
 		if(movie != null) {
 		List<Seat> seats=sRepo.findAllById(seatIds);
 			if(seats != null) {
-				movie.setSeatList(seats);
+				movie.setSeatsList(seats);
 				ResponseStructure<Movie> structure=new ResponseStructure<Movie>();
 				structure.setMessage("assign seats to Movie success");
 				structure.setStatus(HttpStatus .OK.value());

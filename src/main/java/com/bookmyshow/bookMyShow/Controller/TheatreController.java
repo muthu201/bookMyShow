@@ -1,10 +1,10 @@
 package com.bookmyshow.bookMyShow.Controller;
 
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bookmyshow.bookMyShow.Entity.Seat;
-import com.bookmyshow.bookMyShow.Entity.SeatType;
 import com.bookmyshow.bookMyShow.Entity.Theatre;
 import com.bookmyshow.bookMyShow.Service.TheatreService;
 import com.bookmyshow.bookMyShow.util.ResponseStructure;
+
+import jakarta.validation.Valid;
 
 @RequestMapping("theatre")
 @RestController
@@ -27,12 +27,12 @@ public class TheatreController {
 	TheatreService tService;
 	
 	@PostMapping
-	ResponseEntity<ResponseStructure<Theatre>> saveTheatre(@RequestBody Theatre theatre){
+	ResponseEntity<ResponseStructure<Theatre>> saveTheatre(@Valid @RequestBody Theatre theatre,BindingResult result){
 		return tService.saveTheatre(theatre);
 	}
-	@PutMapping("assignMoviesToTheatre")
-	public ResponseEntity<ResponseStructure<Theatre>> assignMoviesToTheatre(@RequestParam int theatreId,@RequestBody List<Integer> movieIds) {
-		return tService.assignMoviesToTheatre(theatreId, movieIds);
+	@PutMapping("assignScreensToTheatre")
+	public ResponseEntity<ResponseStructure<Theatre>> assignScreensToTheatre(@RequestParam int theatreId,@RequestBody List<Integer> screenIds) {
+		return tService.assignScreensToTheatre(theatreId, screenIds);
 	}
 
 	@GetMapping
@@ -40,7 +40,7 @@ public class TheatreController {
 		return tService.findTheatre(theatreId);
 	}
 	@PutMapping
-	ResponseEntity<ResponseStructure<Theatre>> updateTheatre(@RequestBody Theatre theatre,@RequestParam int theatreId){
+	ResponseEntity<ResponseStructure<Theatre>> updateTheatre(@Valid @RequestBody Theatre theatre,@RequestParam int theatreId,BindingResult result){
 		return tService.updateTheatre(theatre, theatreId);
 	}
 	@DeleteMapping

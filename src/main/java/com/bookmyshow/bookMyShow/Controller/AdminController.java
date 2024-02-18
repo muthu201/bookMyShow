@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,8 @@ import com.bookmyshow.bookMyShow.Entity.Admin;
 import com.bookmyshow.bookMyShow.Service.AdminService;
 import com.bookmyshow.bookMyShow.util.ResponseStructure;
 
+import jakarta.validation.Valid;
+
 @RequestMapping("admin")
 @RestController
 public class AdminController {
@@ -25,25 +28,25 @@ public class AdminController {
 	AdminService aService;
 	
 	@PostMapping
-	ResponseEntity<ResponseStructure<AdminDto>> saveAdmin(@RequestBody Admin admin){
+	ResponseEntity<ResponseStructure<AdminDto>> saveAdmin(@Valid @RequestBody Admin admin,BindingResult result){
 		return aService.saveAdmin(admin);
 	}
 	@PutMapping("assignTheatresToAdmin")
-	ResponseEntity<ResponseStructure<AdminDto>> assignTheatresToAdmin(@RequestParam int adminId,@RequestBody List<Integer> theatreIds){
+	ResponseEntity<ResponseStructure<AdminDto>> assignTheatresToAdmin(@RequestParam int adminId, @RequestBody List<Integer> theatreIds){
 		return aService.assignTheatresToAdmin(adminId, theatreIds);
 	}
 	@GetMapping
-	ResponseEntity<ResponseStructure<AdminDto>> findAdmin(@RequestParam int adminId){
+	ResponseEntity<ResponseStructure<AdminDto>> findAdmin( @RequestParam int adminId){
 		return aService.findAdmin(adminId);
 	}
 	
 	@PutMapping
-	ResponseEntity<ResponseStructure<AdminDto>> updateAdmin(@RequestBody Admin admin,@RequestParam int adminId){
+	ResponseEntity<ResponseStructure<AdminDto>> updateAdmin(@Valid @RequestBody Admin admin,@RequestParam int adminId,BindingResult result){
 		return aService.updateAdmin(admin, adminId);
 	}
 	
 	@DeleteMapping
-	ResponseEntity<ResponseStructure<AdminDto>> deleteAdmin(@RequestParam int adminId){
+	ResponseEntity<ResponseStructure<AdminDto>> deleteAdmin( @RequestParam int adminId){
 		return aService.deleteAdmin(adminId);
 	}
 }
