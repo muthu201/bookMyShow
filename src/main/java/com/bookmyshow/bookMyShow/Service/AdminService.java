@@ -13,6 +13,8 @@ import com.bookmyshow.bookMyShow.Dto.AdminDto;
 import com.bookmyshow.bookMyShow.Entity.Admin;
 import com.bookmyshow.bookMyShow.Entity.Theatre;
 import com.bookmyshow.bookMyShow.Exception.AdminNotFound;
+import com.bookmyshow.bookMyShow.Exception.EmailWrongException;
+import com.bookmyshow.bookMyShow.Exception.PasswordWrongException;
 import com.bookmyshow.bookMyShow.Repo.TheatreRepo;
 import com.bookmyshow.bookMyShow.util.ResponseStructure;
 @Service
@@ -75,7 +77,9 @@ public class AdminService {
 		}
 		throw new AdminNotFound("Admin not deleted because,Admin not found for the given id");
 	}
-	public ResponseEntity<ResponseStructure<AdminDto>> assignTheatresToAdmin(int adminId,List<Integer> theatreIds){
+	public ResponseEntity<ResponseStructure<AdminDto>> assignTheatresToAdmin(String adminEmail,String adminPassword,int adminId,List<Integer> theatreIds){
+		Admin ladmin=adminLogin(adminEmail, adminPassword);
+		if(ladmin !=null) {
 		AdminDto aDto=new AdminDto();
 		ModelMapper mapper=new ModelMapper();
 		Admin admin=aDao.findAdmin(adminId);
@@ -90,5 +94,35 @@ public class AdminService {
 			return new ResponseEntity<ResponseStructure<AdminDto>>(structure,HttpStatus.OK);
 		}
 		throw new AdminNotFound("we can't assign theatres to Admin because,Admin not found for the given id");
+		}
+		throw new AdminNotFound("admin login required");
+	}
+	public Admin adminLogin(String adminEmail,String adminPassword) {
+		Admin admin=aDao.findByEmail(adminEmail);
+		if(admin.getAdminEmail().equals(adminEmail)) {
+			if(admin.getAdminPassword().equals(adminPassword)) {
+				return admin;
+			}
+			throw new PasswordWrongException("admin password is wrong");
+		}
+		throw new EmailWrongException("admin email is wrong");
+	}
+	public ResponseEntity<ResponseStructure<AdminDto>> findByEmail(String adminEmail,String adminPassword){
+		AdminDto aDto=new AdminDto();
+		ModelMapper mapper=new ModelMapper();
+		Admin admin=aDao.findByEmail(adminEmail);
+		if(admin.getAdminEmail().equals(adminEmail)) {
+			if(admin.getAdminPassword().equals(adminPassword)) {
+				mapper.map(admin, aDto);
+				ResponseStructure<AdminDto> structure=new ResponseStructure<AdminDto>();
+				structure.setData(aDto);
+				structure.setMessage("admin login success");
+				structure.setStatus(HttpStatus.FOUND.value());
+				return new ResponseEntity<ResponseStructure<AdminDto>>(structure,HttpStatus.FOUND);
+
+			}
+			throw new PasswordWrongException("admin password is wrong");
+		}
+		throw new EmailWrongException("admin email is wrong");
 	}
 }

@@ -25,6 +25,10 @@ public class AdminDao{
 		return null;
 	}
 	
+	public Admin findByEmail(String adminEmail) {
+		return aRepo.findByEmail(adminEmail);
+	}
+	
 	public Admin deleteAdmin(int adminId) {
 		Admin admin=findAdmin(adminId);
 		aRepo.delete(admin);

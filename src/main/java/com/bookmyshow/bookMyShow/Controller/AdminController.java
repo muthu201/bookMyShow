@@ -32,14 +32,18 @@ public class AdminController {
 		return aService.saveAdmin(admin);
 	}
 	@PutMapping("assignTheatresToAdmin")
-	ResponseEntity<ResponseStructure<AdminDto>> assignTheatresToAdmin(@RequestParam int adminId, @RequestBody List<Integer> theatreIds){
-		return aService.assignTheatresToAdmin(adminId, theatreIds);
+	ResponseEntity<ResponseStructure<AdminDto>> assignTheatresToAdmin(@RequestParam String adminEmail,@RequestParam String adminPassword,@RequestParam int adminId, @RequestBody List<Integer> theatreIds){
+		return aService.assignTheatresToAdmin(adminEmail, adminPassword, adminId, theatreIds);
 	}
 	@GetMapping
 	ResponseEntity<ResponseStructure<AdminDto>> findAdmin( @RequestParam int adminId){
 		return aService.findAdmin(adminId);
 	}
-	
+	@GetMapping("adminLogin")
+	public ResponseEntity<ResponseStructure<AdminDto>> findByEmail(@RequestParam String adminEmail,@RequestParam String adminPassword){
+		return aService.findByEmail(adminEmail, adminPassword);
+	}
+
 	@PutMapping
 	ResponseEntity<ResponseStructure<AdminDto>> updateAdmin(@Valid @RequestBody Admin admin,@RequestParam int adminId,BindingResult result){
 		return aService.updateAdmin(admin, adminId);

@@ -9,10 +9,15 @@ import org.springframework.stereotype.Service;
 
 import com.bookmyshow.bookMyShow.Dao.MovieDao;
 import com.bookmyshow.bookMyShow.Dao.ScreenDao;
+import com.bookmyshow.bookMyShow.Dao.TheatreAdminDao;
 import com.bookmyshow.bookMyShow.Entity.Movie;
 import com.bookmyshow.bookMyShow.Entity.Screen;
+import com.bookmyshow.bookMyShow.Entity.TheatreAdmin;
+import com.bookmyshow.bookMyShow.Exception.EmailWrongException;
 import com.bookmyshow.bookMyShow.Exception.MovieNotFound;
+import com.bookmyshow.bookMyShow.Exception.PasswordWrongException;
 import com.bookmyshow.bookMyShow.Exception.ScreenNotFound;
+import com.bookmyshow.bookMyShow.Exception.TheatreAdminNotFound;
 import com.bookmyshow.bookMyShow.Repo.MovieRepo;
 import com.bookmyshow.bookMyShow.util.ResponseStructure;
 
@@ -24,6 +29,8 @@ public class ScreenService {
 	MovieRepo mRepo;
 	@Autowired
 	MovieDao mDao;
+	@Autowired
+	TheatreAdminDao taDao;
 	
 	public ResponseEntity<ResponseStructure<Screen>> saveScreen(Screen screen) {
 		ResponseStructure<Screen> structure=new ResponseStructure<Screen>();
@@ -54,7 +61,19 @@ public class ScreenService {
 		}
 		throw new ScreenNotFound("we can't delete the screen because,Screen not found for the given id");
 	}
-	public ResponseEntity<ResponseStructure<Screen>> assignMoviesToScreen(int screenId,List<Integer> movieIds) {
+	public TheatreAdmin theatreAdminLogin(String theatreAdminEmail,String theatreAdminPassword ) {
+		TheatreAdmin tadmin=taDao.findByEmail(theatreAdminEmail);
+		if(tadmin.getTheatreAdminEmail().equals(theatreAdminEmail)) {
+			if(tadmin.getTheatreAdminPassword().equals(theatreAdminPassword)) {
+				return tadmin;
+			}
+			throw new PasswordWrongException("theatre Admin Password is wrong");
+		}
+		throw new EmailWrongException("theatre admin email is wrong");
+	}
+	public ResponseEntity<ResponseStructure<Screen>> assignMoviesToScreen(String theatreAdminEmail,String theatreAdminPassword,int screenId,List<Integer> movieIds) {
+		TheatreAdmin tadmin=theatreAdminLogin(theatreAdminEmail, theatreAdminPassword);
+		if(tadmin != null) {
 		Screen screen=sDao.findScreen(screenId);
 		if(screen != null) {
 			List<Movie> moviesList=mRepo.findAllById(movieIds);
@@ -66,8 +85,12 @@ public class ScreenService {
 			return new ResponseEntity<ResponseStructure<Screen>>(structure,HttpStatus.OK);
 		}
 		throw new ScreenNotFound("we can't assign movies to screen because,screen not found for given id");
+		}
+		throw new TheatreAdminNotFound("theatre Admin login required");
 	}
-	public ResponseEntity<ResponseStructure<Screen>> deleteMovieOrShowInScreen(int screenId,int movieId) {
+	public ResponseEntity<ResponseStructure<Screen>> deleteMovieOrShowInScreen(String theatreAdminEmail,String theatreAdminPassword,int screenId,int movieId) {
+		TheatreAdmin tadmin=theatreAdminLogin(theatreAdminEmail, theatreAdminPassword);
+		if(tadmin != null) {
 		Screen screen=sDao.findScreen(screenId);
 		Movie movie=mDao.findMovie(movieId);
 		if(screen != null) {
@@ -91,6 +114,8 @@ public class ScreenService {
 			throw new MovieNotFound("we can't delete movie In screen because,movie not found for given id");
 		}
 		throw new ScreenNotFound("we can't delete movie In screen because,screen not found for given id");		
+		}
+		throw new TheatreAdminNotFound("theatre Admin login required");
 	}
 	public ResponseEntity<ResponseStructure<Screen>> updateScreen(Screen screen,int screenId) {
 		ResponseStructure<Screen> structure=new ResponseStructure<Screen>();

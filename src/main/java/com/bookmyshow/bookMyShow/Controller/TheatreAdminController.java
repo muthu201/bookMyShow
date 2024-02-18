@@ -37,6 +37,10 @@ public class TheatreAdminController {
 	ResponseEntity<ResponseStructure<TheatreAdminDto>> assignTheatreToTheatreAdmin(@RequestParam int  theatreAdminId,@RequestParam int  theatreId){
 		return taService.assignTheatreToTheatreAdmin(theatreAdminId, theatreId);
 	}
+	@GetMapping("theatreAdminLogin")
+	public ResponseEntity<ResponseStructure<TheatreAdminDto>> findByEmail(@RequestParam String theatreAdminEmail,@RequestParam String theatreAdminPassword){
+		return taService.findByEmail(theatreAdminEmail, theatreAdminPassword);
+	}
 
 	@PutMapping
 	ResponseEntity<ResponseStructure<TheatreAdminDto>> updateAdmin(@Valid @RequestBody TheatreAdmin theatreAdmin,@RequestParam int theatreAdminId,BindingResult result){

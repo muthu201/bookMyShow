@@ -11,6 +11,8 @@ import com.bookmyshow.bookMyShow.Dao.TheatreDao;
 import com.bookmyshow.bookMyShow.Dto.TheatreAdminDto;
 import com.bookmyshow.bookMyShow.Entity.Theatre;
 import com.bookmyshow.bookMyShow.Entity.TheatreAdmin;
+import com.bookmyshow.bookMyShow.Exception.EmailWrongException;
+import com.bookmyshow.bookMyShow.Exception.PasswordWrongException;
 import com.bookmyshow.bookMyShow.Exception.TheatreAdminNotFound;
 import com.bookmyshow.bookMyShow.Exception.TheatreNotFound;
 import com.bookmyshow.bookMyShow.util.ResponseStructure;
@@ -46,7 +48,25 @@ public class TheatreAdminService {
 		}
 		throw new TheatreAdminNotFound("theatre Admin not found for the given id");
 	}
-	
+	 
+	public ResponseEntity<ResponseStructure<TheatreAdminDto>> findByEmail(String theatreAdminEmail,String theatreAdminPassword){
+		TheatreAdminDto aDto=new TheatreAdminDto();
+		ModelMapper mapper=new ModelMapper();
+		TheatreAdmin tadmin=taDao.findByEmail(theatreAdminEmail);
+		if(tadmin.getTheatreAdminEmail().equals(theatreAdminEmail)) {
+			if(tadmin.getTheatreAdminPassword().equals(theatreAdminPassword)) {
+				mapper.map(tadmin, aDto);
+				ResponseStructure<TheatreAdminDto> structure=new ResponseStructure<TheatreAdminDto>();
+				structure.setData(aDto);
+				structure.setMessage("theatre Admin login success");
+				structure.setStatus(HttpStatus.FOUND.value());
+				return new ResponseEntity<ResponseStructure<TheatreAdminDto>>(structure,HttpStatus.FOUND);
+			}
+			throw new PasswordWrongException("theatre Admin Password is wrong");
+		}
+		throw new EmailWrongException("theatre admin email is wrong");
+	}
+
 	public ResponseEntity<ResponseStructure<TheatreAdminDto>> updateAdmin(TheatreAdmin theatreAdmin,int theatreAdminId){
 		TheatreAdminDto taDto=new TheatreAdminDto();
 		ModelMapper mapper=new ModelMapper();

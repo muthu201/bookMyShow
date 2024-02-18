@@ -23,7 +23,9 @@ public class TheatreAdminDao {
 		}
 		return null;
 	}
-	
+	public TheatreAdmin findByEmail(String theatreAdminEmail) {
+		return atRepo.findByEmail(theatreAdminEmail);
+	}
 	public TheatreAdmin deleteAdmin(int theatreAdminId) {
 		TheatreAdmin tAdmin=findAdmin(theatreAdminId);
 		atRepo.delete(tAdmin);

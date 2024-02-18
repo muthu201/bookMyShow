@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import com.bookmyshow.bookMyShow.Dao.UserDao;
 import com.bookmyshow.bookMyShow.Dto.UserDto;
 import com.bookmyshow.bookMyShow.Entity.User;
+import com.bookmyshow.bookMyShow.Exception.EmailWrongException;
+import com.bookmyshow.bookMyShow.Exception.PasswordWrongException;
 import com.bookmyshow.bookMyShow.Exception.UserNotFound;
 import com.bookmyshow.bookMyShow.util.ResponseStructure;
 
@@ -59,11 +61,11 @@ public class UserService {
 		return new ResponseEntity<ResponseStructure<UserDto>> (structure,HttpStatus.FOUND);
 			}
 			else {
-				throw new UserNotFound(" your password is wrong please provide correct deteils");
+				throw new PasswordWrongException(" user password is wrong");
 			}
 		}
 			else {
-				throw new UserNotFound(" your email is wrong please provide correct deteils");
+				throw new EmailWrongException("user Email is wrong");
 			}
 	}
 	public ResponseEntity<ResponseStructure<UserDto>> deleteUser(int userId){

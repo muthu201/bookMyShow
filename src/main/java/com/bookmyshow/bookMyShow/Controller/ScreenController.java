@@ -43,15 +43,14 @@ public class ScreenController {
 		return sService.deleteScreen(screenId);
 	}
 	@PutMapping("assignMoviesToScreen")
-	public ResponseEntity<ResponseStructure<Screen>> assignMoviesToScreen(@RequestParam int screenId,@RequestBody List<Integer> movieIds) {
-		return sService.assignMoviesToScreen(screenId, movieIds);
+	public ResponseEntity<ResponseStructure<Screen>> assignMoviesToScreen(@RequestParam String theatreAdminEmail,@RequestParam String theatreAdminPassword,@RequestParam int screenId,@RequestBody List<Integer> movieIds) {
+		return sService.assignMoviesToScreen(theatreAdminEmail, theatreAdminPassword, screenId, movieIds);
 	}
 	
 	@DeleteMapping("deleteMovieOrShowInScreen")
-	public ResponseEntity<ResponseStructure<Screen>> deleteMovieOrShowInScreen(@RequestParam int screenId,@RequestParam int movieId) {
-		return sService.deleteMovieOrShowInScreen(screenId, movieId);
+	public ResponseEntity<ResponseStructure<Screen>> deleteMovieOrShowInScreen(@RequestParam String theatreAdminEmail,@RequestParam String theatreAdminPassword,@RequestParam int screenId,@RequestParam int movieId) {
+		return sService.deleteMovieOrShowInScreen(theatreAdminEmail, theatreAdminPassword, screenId, movieId);
 	}
-
 
 	@PutMapping
 	public ResponseEntity<ResponseStructure<Screen>> updateScreen(@Valid @RequestBody Screen screen,@RequestParam int screenId,BindingResult result) {
